@@ -1,0 +1,2898 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Health Log</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #f4f6f9;
+        --bg-grad: linear-gradient(180deg, #eef1f7 0%, #f4f6f9 260px);
+        --card: #ffffff;
+        --text: #0f172a;
+        --muted: #64748b;
+        --muted-soft: #94a3b8;
+        --border: #e5e9f0;
+        --accent: #4338ca;
+        --accent-soft: #eef0fe;
+        --accent2: #0891b2;
+        --bp-color: #4338ca;
+        --bp-bg: #eef0fe;
+        --bp-border: #d6d9fb;
+        --sugar-color: #0e7490;
+        --sugar-bg: #ecfbfe;
+        --sugar-border: #bff0f8;
+        --med-color: #b45309;
+        --med-bg: #fef8ec;
+        --med-border: #f6e2b3;
+        --danger: #dc2626;
+        --danger-bg: #fef2f2;
+        --danger-border: #fecaca;
+        --high: #dc2626;
+        --elevated: #c2740a;
+        --normal: #0d9268;
+        --shadow-xs: 0 1px 2px rgba(15, 23, 42, 0.04);
+        --shadow-sm:
+          0 1px 3px rgba(15, 23, 42, 0.06), 0 1px 2px rgba(15, 23, 42, 0.04);
+        --shadow-md: 0 8px 24px rgba(15, 23, 42, 0.08);
+        --shadow-lg: 0 20px 48px rgba(15, 23, 42, 0.16);
+        --radius: 16px;
+        --radius-sm: 10px;
+        color-scheme: light;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html {
+        font-size: 16px;
+      }
+      body {
+        margin: 0;
+        font-family:
+          "Inter",
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          Roboto,
+          Arial,
+          sans-serif;
+        background: var(--bg-grad), var(--bg);
+        background-attachment: fixed;
+        color: var(--text);
+        padding: 28px 18px 90px;
+        -webkit-font-smoothing: antialiased;
+        line-height: 1.45;
+      }
+      .wrap {
+        max-width: 880px;
+        margin: 0 auto;
+      }
+
+      header.hero {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        margin-bottom: 28px;
+        padding: 4px 2px;
+      }
+      .hero-icon {
+        width: 52px;
+        height: 52px;
+        border-radius: 14px;
+        background: linear-gradient(135deg, var(--accent), var(--sugar-color));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        box-shadow: 0 6px 16px rgba(67, 56, 202, 0.28);
+        flex-shrink: 0;
+      }
+      h1 {
+        font-size: 1.5rem;
+        margin: 0;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+      }
+      .subtitle {
+        color: var(--muted);
+        font-size: 0.88rem;
+        margin-top: 2px;
+      }
+
+      .card {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 24px;
+        margin-bottom: 20px;
+        box-shadow: var(--shadow-sm);
+      }
+      .card h2 {
+        margin: 0 0 16px;
+        font-size: 1.05rem;
+        font-weight: 700;
+        letter-spacing: -0.01em;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 14px;
+      }
+      label {
+        display: block;
+        font-size: 0.82rem;
+        color: var(--muted);
+        margin-bottom: 6px;
+        font-weight: 600;
+      }
+      input,
+      textarea,
+      select {
+        width: 100%;
+        padding: 12px 14px;
+        border: 1.5px solid var(--border);
+        border-radius: var(--radius-sm);
+        font-size: 1rem;
+        background: #fff;
+        color: var(--text);
+        font-family: inherit;
+        transition:
+          border-color 0.15s,
+          box-shadow 0.15s;
+        min-height: 48px;
+      }
+      input:hover,
+      textarea:hover,
+      select:hover {
+        border-color: #cbd2e0;
+      }
+      input:focus,
+      textarea:focus,
+      select:focus {
+        outline: none;
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3.5px rgba(67, 56, 202, 0.14);
+      }
+      textarea {
+        resize: vertical;
+        min-height: 60px;
+      }
+      .full {
+        grid-column: 1 / -1;
+      }
+
+      /* Number stepper */
+      .stepper {
+        display: flex;
+        align-items: stretch;
+        gap: 6px;
+      }
+      .stepper input {
+        text-align: center;
+        font-weight: 800;
+        font-size: 1.15rem;
+        flex: 1;
+        min-width: 0;
+        padding-left: 4px;
+        padding-right: 4px;
+      }
+      .stepper-btn {
+        flex: 0 0 auto;
+        width: 46px;
+        min-height: 48px;
+        border-radius: var(--radius-sm);
+        border: 1.5px solid var(--border);
+        background: #fff;
+        font-size: 1.4rem;
+        font-weight: 600;
+        color: var(--accent);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        user-select: none;
+        line-height: 1;
+        padding: 0;
+        transition:
+          background 0.12s,
+          border-color 0.12s;
+      }
+      .stepper-btn:hover {
+        border-color: var(--accent);
+        background: var(--bp-bg);
+      }
+      .stepper-btn:active {
+        background: var(--bp-bg);
+        transform: scale(0.95);
+      }
+
+      /* Quick date/time picker */
+      .quick-row {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin-bottom: 10px;
+      }
+      .quick-btn {
+        padding: 11px 20px;
+        min-height: 44px;
+        border-radius: var(--radius-sm);
+        background: #fff;
+        border: 1.5px solid var(--border);
+        color: var(--text);
+        font-size: 0.92rem;
+        font-weight: 600;
+        cursor: pointer;
+        flex: 1;
+        text-align: center;
+        transition: all 0.12s;
+      }
+      .quick-btn:hover {
+        border-color: var(--accent);
+        color: var(--accent);
+      }
+      .quick-btn.active {
+        background: var(--accent);
+        color: #fff;
+        border-color: var(--accent);
+      }
+      .datetime-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        margin-bottom: 8px;
+      }
+      .datetime-grid input {
+        font-size: 0.98rem;
+        padding: 12px 14px;
+        font-weight: 600;
+      }
+      .time-presets {
+        display: flex;
+        gap: 7px;
+        flex-wrap: wrap;
+        margin-top: 10px;
+      }
+      .time-preset {
+        padding: 9px 14px;
+        border-radius: 999px;
+        background: #fff;
+        border: 1.5px solid var(--border);
+        font-size: 0.82rem;
+        font-weight: 600;
+        color: var(--muted);
+        cursor: pointer;
+        min-height: 38px;
+        display: flex;
+        align-items: center;
+        transition: all 0.12s;
+      }
+      .time-preset:hover {
+        border-color: var(--accent2);
+        color: var(--text);
+        background: var(--sugar-bg);
+      }
+
+      /* Sugar unit toggle (mg/dL vs mmol/L) */
+      .unit-toggle {
+        display: inline-flex;
+        background: #fff;
+        border: 1.5px solid var(--sugar-border);
+        border-radius: 999px;
+        padding: 3px;
+        margin-bottom: 8px;
+        gap: 2px;
+      }
+      .unit-btn {
+        border: none;
+        background: transparent;
+        padding: 6px 14px;
+        min-height: 30px;
+        border-radius: 999px;
+        font-size: 0.78rem;
+        font-weight: 700;
+        color: var(--muted);
+        cursor: pointer;
+        transition: all 0.15s;
+      }
+      .unit-btn:hover {
+        color: var(--sugar-color);
+      }
+      .unit-btn.active {
+        background: var(--sugar-color);
+        color: #fff;
+      }
+
+      /* Log-type chooser (dynamic first screen) */
+      .choose-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 12px;
+      }
+      .choose-card {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        padding: 18px 20px;
+        min-height: 68px;
+        border-radius: var(--radius);
+        border: 1.5px solid var(--border);
+        background: #fff;
+        color: var(--text);
+        font-size: 1.02rem;
+        font-weight: 700;
+        cursor: pointer;
+        user-select: none;
+        transition: all 0.14s;
+        box-shadow: var(--shadow-xs);
+      }
+      .choose-card:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-md);
+      }
+      .choose-card:active {
+        transform: scale(0.98) translateY(0);
+      }
+      .choose-icon {
+        font-size: 1.6rem;
+        flex-shrink: 0;
+        width: 44px;
+        height: 44px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .choose-card[data-type="bp"] .choose-icon {
+        background: var(--bp-bg);
+      }
+      .choose-card[data-type="sugar"] .choose-icon {
+        background: var(--sugar-bg);
+      }
+      .choose-card[data-type="med"] .choose-icon {
+        background: var(--med-bg);
+      }
+      .choose-card[data-type="bp"]:hover {
+        border-color: var(--bp-color);
+      }
+      .choose-card[data-type="sugar"]:hover {
+        border-color: var(--sugar-color);
+      }
+      .choose-card[data-type="med"]:hover {
+        border-color: var(--med-color);
+      }
+      .section-title .hint,
+      label .hint {
+        font-weight: 500;
+        color: var(--muted-soft);
+        font-size: 0.72rem;
+        text-transform: none;
+        letter-spacing: 0;
+      }
+
+      /* Section blocks for BP / Sugar / Medicine */
+      .section-block {
+        border: 1.5px solid var(--border);
+        border-radius: var(--radius);
+        padding: 18px;
+        margin-top: 16px;
+        background: #fff;
+      }
+      .section-block.bp {
+        border-color: var(--bp-border);
+        background: linear-gradient(180deg, var(--bp-bg) 0%, #fff 70px);
+      }
+      .section-block.sugar {
+        border-color: var(--sugar-border);
+        background: linear-gradient(180deg, var(--sugar-bg) 0%, #fff 70px);
+      }
+      .section-block.med {
+        border-color: var(--med-border);
+        background: linear-gradient(180deg, var(--med-bg) 0%, #fff 70px);
+      }
+      .section-title {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-weight: 700;
+        font-size: 0.98rem;
+        margin-bottom: 14px;
+      }
+      .section-title .icon-badge {
+        width: 32px;
+        height: 32px;
+        border-radius: 9px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        flex-shrink: 0;
+      }
+      .bp .icon-badge {
+        background: var(--bp-color);
+      }
+      .sugar .icon-badge {
+        background: var(--sugar-color);
+      }
+      .med .icon-badge {
+        background: var(--med-color);
+      }
+
+      .actions {
+        display: flex;
+        gap: 10px;
+        margin-top: 20px;
+        flex-wrap: wrap;
+      }
+      button {
+        cursor: pointer;
+        border: none;
+        border-radius: var(--radius-sm);
+        padding: 12px 20px;
+        font-size: 0.92rem;
+        font-weight: 600;
+        font-family: inherit;
+        transition:
+          transform 0.08s,
+          box-shadow 0.15s,
+          background 0.15s,
+          border-color 0.15s;
+        min-height: 46px;
+      }
+      button:active {
+        transform: scale(0.98);
+      }
+      .btn-primary {
+        background: var(--accent);
+        color: #fff;
+        box-shadow: 0 2px 10px rgba(67, 56, 202, 0.28);
+        font-size: 1rem;
+        padding: 15px 26px;
+        width: 100%;
+        font-weight: 700;
+        letter-spacing: -0.01em;
+      }
+      .btn-primary:hover {
+        background: #372fb0;
+        box-shadow: 0 4px 14px rgba(67, 56, 202, 0.36);
+      }
+      .btn-primary:disabled,
+      .btn-secondary:disabled {
+        opacity: 0.65;
+        cursor: default;
+        transform: none;
+      }
+      .btn-secondary {
+        background: #fff;
+        color: var(--text);
+        border: 1.5px solid var(--border);
+      }
+      .btn-secondary:hover {
+        border-color: #cbd2e0;
+        background: #f8fafc;
+      }
+      .btn-danger {
+        background: var(--danger-bg);
+        color: var(--danger);
+        border: 1.5px solid var(--danger-border);
+      }
+      .btn-danger:hover {
+        background: #fee2e2;
+      }
+      .btn-sm {
+        padding: 9px 14px;
+        font-size: 0.85rem;
+        min-height: 40px;
+      }
+
+      /* Medicine chips */
+      .med-chip-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 4px;
+      }
+      .med-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 16px;
+        border-radius: 999px;
+        background: #fff;
+        border: 1.5px solid var(--med-border);
+        color: var(--text);
+        font-size: 0.92rem;
+        font-weight: 600;
+        cursor: pointer;
+        user-select: none;
+        transition: all 0.12s;
+        min-height: 42px;
+      }
+      .med-chip:hover {
+        border-color: var(--med-color);
+      }
+      .med-chip.selected {
+        background: var(--med-color);
+        color: #fff;
+        border-color: var(--med-color);
+        box-shadow: 0 2px 8px rgba(180, 83, 9, 0.28);
+      }
+      .med-chip .del-x {
+        opacity: 0.5;
+        font-weight: 700;
+        padding: 0 3px;
+        border-radius: 50%;
+        font-size: 1.05rem;
+      }
+      .med-chip .del-x:hover {
+        opacity: 1;
+        color: var(--danger);
+      }
+      .meds-card .med-chip [data-edit] {
+        cursor: pointer;
+        text-decoration: underline dotted;
+        text-underline-offset: 3px;
+      }
+      .med-chip-add {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 10px 16px;
+        border-radius: 999px;
+        background: #fff;
+        border: 1.5px dashed var(--med-color);
+        color: var(--med-color);
+        font-size: 0.92rem;
+        font-weight: 600;
+        cursor: pointer;
+        min-height: 42px;
+      }
+      .med-chip-add:hover {
+        background: var(--med-bg);
+      }
+
+      .selected-meds-detail {
+        margin-top: 14px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+      .selected-med-row {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+        background: #fff;
+        border: 1.5px solid var(--med-border);
+        border-radius: var(--radius-sm);
+        padding: 12px 14px;
+      }
+      .selected-med-row .name {
+        font-weight: 700;
+        font-size: 0.98rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .selected-med-row .deselect {
+        font-size: 0.74rem;
+        font-weight: 600;
+        color: var(--danger);
+        cursor: pointer;
+        padding: 4px 8px;
+        border-radius: 8px;
+      }
+      .selected-med-row .deselect:hover {
+        background: var(--danger-bg);
+      }
+      .selected-med-row .fields-row {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+      .mini-field {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        flex: 1;
+        min-width: 110px;
+      }
+      .mini-label {
+        font-size: 0.68rem;
+        font-weight: 700;
+        color: var(--muted-soft);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+      .selected-med-row input,
+      .selected-med-row select {
+        padding: 9px 12px;
+        font-size: 0.88rem;
+        min-height: 40px;
+      }
+      .mini-field .time-field {
+        width: 100%;
+      }
+
+      .inline-add-form {
+        display: flex;
+        gap: 8px;
+        margin-top: 10px;
+        flex-wrap: wrap;
+        background: #fbfbfd;
+        padding: 12px;
+        border-radius: var(--radius-sm);
+        border: 1.5px solid var(--med-border);
+      }
+      .inline-add-form input {
+        flex: 1;
+        min-width: 140px;
+      }
+
+      .toolbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-bottom: 14px;
+      }
+      .toolbar .count {
+        color: var(--muted);
+        font-size: 0.86rem;
+        font-weight: 500;
+      }
+      /* Date groups */
+      .date-group {
+        margin-bottom: 14px;
+      }
+      .date-group-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        background: #f8fafc;
+        border: 1.5px solid var(--border);
+        border-radius: var(--radius-sm);
+        padding: 12px 16px;
+        cursor: pointer;
+        user-select: none;
+        transition: all 0.15s;
+      }
+      .date-group-header:hover {
+        border-color: #cbd2e0;
+        box-shadow: var(--shadow-xs);
+      }
+      .date-group-title {
+        font-weight: 700;
+        font-size: 0.95rem;
+        flex: 1;
+        display: flex;
+        align-items: baseline;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+      .date-group-sub {
+        font-weight: 500;
+        font-size: 0.78rem;
+        color: var(--muted);
+      }
+      .date-group-count {
+        font-size: 0.76rem;
+        font-weight: 600;
+        color: var(--muted);
+        background: #fff;
+        border: 1px solid var(--border);
+        padding: 3px 10px;
+        border-radius: 999px;
+        flex-shrink: 0;
+      }
+      .date-group-chevron {
+        font-size: 1rem;
+        font-weight: 700;
+        color: var(--accent);
+        transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+        flex-shrink: 0;
+      }
+      .date-group-chevron.open {
+        transform: rotate(180deg);
+      }
+      .date-group-body {
+        max-height: 0;
+        opacity: 0;
+        overflow: hidden;
+        padding-top: 0;
+        transition:
+          max-height 0.32s cubic-bezier(0.4, 0, 0.2, 1),
+          opacity 0.28s ease,
+          padding-top 0.32s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      .date-group-body.open {
+        opacity: 1;
+        padding-top: 10px;
+      }
+
+      /* Records */
+      .record-card {
+        border: 1.5px solid var(--border);
+        border-left: 3px solid var(--accent);
+        border-radius: var(--radius-sm);
+        padding: 14px 18px;
+        margin-bottom: 10px;
+        display: flex;
+        gap: 16px;
+        align-items: flex-start;
+        background: #fff;
+        transition:
+          box-shadow 0.15s,
+          border-color 0.15s;
+        flex-wrap: wrap;
+      }
+      .record-card:hover {
+        box-shadow: var(--shadow-sm);
+        border-color: #d8dde6;
+      }
+      .bp-normal {
+        color: var(--normal);
+      }
+      .bp-elevated {
+        color: var(--elevated);
+      }
+      .bp-high {
+        color: var(--high);
+      }
+      .record-main {
+        flex: 1;
+        min-width: 180px;
+      }
+      .record-datetime {
+        font-size: 0.82rem;
+        color: var(--muted);
+        font-weight: 600;
+        margin-bottom: 8px;
+      }
+
+      /* Consistent labeled block for every section: BP, Sugar, Medicine, Notes */
+      .record-block {
+        margin-top: 10px;
+        padding-top: 10px;
+        border-top: 1px dashed var(--border);
+      }
+      .record-block:first-of-type {
+        margin-top: 0;
+        padding-top: 0;
+        border-top: none;
+      }
+      .record-block-label {
+        font-size: 0.7rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        margin-bottom: 5px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .record-block-label.bp {
+        color: var(--bp-color);
+      }
+      .record-block-label.sugar {
+        color: var(--sugar-color);
+      }
+      .record-block-label.med {
+        color: var(--med-color);
+      }
+      .record-block-label.notes {
+        color: var(--muted);
+      }
+
+      .vitals-row {
+        display: flex;
+        align-items: baseline;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+      .vitals-num {
+        font-size: 1.2rem;
+        font-weight: 800;
+        letter-spacing: -0.01em;
+      }
+      .vitals-num .unit {
+        font-size: 0.76rem;
+        font-weight: 600;
+        color: var(--muted);
+      }
+      .vitals-status {
+        font-size: 0.76rem;
+        font-weight: 700;
+        padding: 3px 10px;
+        border-radius: 999px;
+        background: var(--bp-bg);
+      }
+      .vitals-row.sugar .vitals-status {
+        background: var(--sugar-bg);
+      }
+      .vitals-extra {
+        font-size: 0.8rem;
+        color: var(--muted);
+        font-weight: 600;
+      }
+
+      .record-meds {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+      .med-pill {
+        background: var(--med-bg);
+        border: 1px solid var(--med-border);
+        color: var(--text);
+        padding: 5px 12px;
+        border-radius: 8px;
+        font-size: 0.82rem;
+        font-weight: 600;
+      }
+      .med-pill .med-name {
+        color: var(--med-color);
+        font-weight: 700;
+      }
+      .med-pill .meta {
+        color: var(--muted);
+        font-weight: 500;
+      }
+      .record-notes {
+        font-size: 0.86rem;
+        color: var(--text);
+      }
+
+      /* Print-only report header */
+      .print-header {
+        display: none;
+      }
+      .record-actions {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        flex-shrink: 0;
+        margin-left: auto;
+      }
+      .record-actions button {
+        padding: 8px 16px;
+        font-size: 0.82rem;
+        min-height: 38px;
+      }
+
+      .empty {
+        text-align: center;
+        color: var(--muted);
+        padding: 48px 10px;
+        font-size: 0.94rem;
+      }
+      .empty .big {
+        font-size: 2.2rem;
+        margin-bottom: 10px;
+        opacity: 0.7;
+      }
+
+      /* Success toast */
+      .toast {
+        position: fixed;
+        left: 50%;
+        bottom: 24px;
+        transform: translateX(-50%) translateY(20px);
+        background: #0f172a;
+        color: #fff;
+        padding: 14px 22px;
+        border-radius: 12px;
+        font-size: 0.92rem;
+        font-weight: 600;
+        box-shadow: var(--shadow-lg);
+        opacity: 0;
+        pointer-events: none;
+        transition:
+          opacity 0.25s ease,
+          transform 0.25s ease;
+        z-index: 50;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        max-width: calc(100% - 32px);
+        text-align: center;
+      }
+      .toast.show {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+      }
+
+      /* Custom confirm modal */
+      .modal-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(15, 23, 42, 0.5);
+        backdrop-filter: blur(2px);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 60;
+        padding: 20px;
+      }
+      .modal-overlay.show {
+        display: flex;
+      }
+      .modal-box {
+        background: #fff;
+        border-radius: var(--radius);
+        padding: 24px;
+        max-width: 360px;
+        width: 100%;
+        box-shadow: var(--shadow-lg);
+        text-align: center;
+      }
+      .modal-box .modal-msg {
+        font-size: 1rem;
+        font-weight: 600;
+        margin-bottom: 18px;
+        line-height: 1.45;
+        color: var(--text);
+      }
+      .modal-box .actions {
+        margin-top: 0;
+        justify-content: center;
+      }
+      .modal-box button {
+        flex: 1;
+      }
+
+      @media (max-width: 560px) {
+        .datetime-grid {
+          grid-template-columns: 1fr;
+        }
+        .record-actions {
+          flex-direction: row;
+          margin-left: 0;
+          width: 100%;
+        }
+        .record-actions button {
+          flex: 1;
+        }
+        .choose-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media print {
+        body {
+          background: #fff;
+          padding: 0;
+          color: #000;
+        }
+        .card.form-card,
+        .card.meds-card,
+        .toolbar button,
+        .record-actions,
+        .no-print,
+        .toast,
+        .modal-overlay,
+        header.hero {
+          display: none !important;
+        }
+        .card {
+          box-shadow: none;
+          border: none;
+          padding: 0;
+          margin-bottom: 14px;
+        }
+        .record-card {
+          break-inside: avoid;
+          border: 1px solid #bbb;
+          background: #fff;
+          border-radius: 8px;
+        }
+        .vitals-status {
+          background: #fff !important;
+          border: 1.5px solid #999;
+        }
+        .vitals-num,
+        .vitals-status,
+        .vitals-extra {
+          color: #000 !important;
+        }
+        .med-pill {
+          background: #fff !important;
+          border: 1.5px solid #999 !important;
+        }
+        .med-pill .med-name,
+        .med-pill .meta {
+          color: #000 !important;
+        }
+        .record-block-label {
+          color: #000 !important;
+        }
+        .record-block {
+          border-top-color: #ccc !important;
+        }
+        .record-datetime {
+          color: #000 !important;
+        }
+        .date-group-body {
+          display: block !important;
+          max-height: none !important;
+          overflow: visible !important;
+          opacity: 1 !important;
+          padding-top: 10px !important;
+        }
+        .date-group-header {
+          cursor: default;
+          background: #fff !important;
+          border: none !important;
+          border-bottom: 2px solid #000 !important;
+          border-radius: 0 !important;
+          padding: 10px 2px;
+        }
+        .date-group-title,
+        .date-group-sub,
+        .date-group-count {
+          color: #000 !important;
+        }
+        .date-group-chevron {
+          display: none !important;
+        }
+        .print-header {
+          display: block !important;
+          margin-bottom: 22px;
+          padding-bottom: 14px;
+          border-bottom: 3px solid #000;
+        }
+        .print-header .rpt-title {
+          font-size: 1.6rem;
+          font-weight: 800;
+          margin: 0 0 6px;
+        }
+        .print-header .rpt-meta {
+          font-size: 0.95rem;
+          color: #333;
+          display: flex;
+          gap: 20px;
+          flex-wrap: wrap;
+        }
+      }
+      .app-footer {
+        text-align: center;
+        color: var(--muted-soft);
+        font-size: 0.8rem;
+        font-weight: 500;
+        margin-top: 28px;
+        padding: 18px 10px 4px;
+      }
+      .lock-again-btn {
+        display: block;
+        margin: 8px auto 0;
+        background: none;
+        border: none;
+        color: var(--muted-soft);
+        font-size: 0.76rem;
+        font-weight: 600;
+        cursor: pointer;
+        padding: 4px 10px;
+        min-height: auto;
+        text-decoration: underline;
+        text-underline-offset: 2px;
+      }
+      .lock-again-btn:hover {
+        color: var(--muted);
+      }
+
+      /* Password lock screen */
+      .lock-screen {
+        position: fixed;
+        inset: 0;
+        background: var(--bg-grad), var(--bg);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 100;
+        padding: 20px;
+      }
+      .lock-screen[hidden] {
+        display: none;
+      }
+      .lock-card {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 32px 28px;
+        max-width: 340px;
+        width: 100%;
+        text-align: center;
+        box-shadow: var(--shadow-lg);
+      }
+      .lock-icon {
+        width: 54px;
+        height: 54px;
+        border-radius: 15px;
+        background: linear-gradient(135deg, var(--accent), var(--sugar-color));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        margin: 0 auto 16px;
+        box-shadow: 0 6px 16px rgba(67, 56, 202, 0.28);
+      }
+      .lock-card h2 {
+        margin: 0 0 6px;
+        font-size: 1.15rem;
+        font-weight: 800;
+        letter-spacing: -0.01em;
+      }
+      .lock-card p {
+        margin: 0 0 20px;
+        color: var(--muted);
+        font-size: 0.85rem;
+      }
+      .lock-card input {
+        text-align: center;
+        letter-spacing: 0.05em;
+      }
+      .lock-input-row {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 6px;
+      }
+      .lock-input-row input {
+        flex: 1;
+        margin-bottom: 0;
+      }
+      .lock-show-btn {
+        flex: 0 0 auto;
+        width: 48px;
+        min-height: 48px;
+        border-radius: var(--radius-sm);
+        border: 1.5px solid var(--border);
+        background: #fff;
+        font-size: 1.1rem;
+        cursor: pointer;
+        padding: 0;
+      }
+      .lock-show-btn:hover {
+        border-color: var(--accent);
+      }
+      .lock-error {
+        color: var(--danger);
+        font-size: 0.8rem;
+        font-weight: 600;
+        margin: 6px 0 14px;
+        min-height: 1.2em;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="lock-screen" id="lock-screen">
+      <div class="lock-card">
+        <div class="lock-icon">🔒</div>
+        <h2>Hi Rajan Ram</h2>
+        <p>Enter the password to view and add records.</p>
+        <div class="lock-input-row">
+          <input
+            type="password"
+            id="lock-password"
+            placeholder="Password"
+            autocomplete="current-password"
+          />
+          <button
+            type="button"
+            class="lock-show-btn"
+            id="lock-show-btn"
+            aria-label="Show password"
+          >
+            👁
+          </button>
+        </div>
+        <div class="lock-error" id="lock-error"></div>
+        <button type="button" class="btn-primary" id="lock-unlock-btn">
+          Unlock
+        </button>
+      </div>
+    </div>
+
+    <div class="wrap" id="app-wrap" hidden>
+      <header class="hero">
+        <div class="hero-icon">🩺</div>
+        <div>
+          <h1>Health Log</h1>
+          <div class="subtitle">
+            BP · Sugar · Medicine are saved automatically, export anytime for
+            the doctor
+          </div>
+        </div>
+      </header>
+
+      <div class="print-header">
+        <div class="rpt-title">🩺 Health Report</div>
+        <div class="rpt-meta">
+          <span id="print-patient"></span>
+          <span id="print-generated"></span>
+          <span id="print-count"></span>
+        </div>
+      </div>
+
+      <div class="card form-card">
+        <div id="step-choose">
+          <h2 style="margin-bottom: 6px">
+            What are you testing or medicine are you taking?
+          </h2>
+          <div class="subtitle" style="margin-bottom: 18px">
+            Tap one to begin, you'll only see what's needed for that.
+          </div>
+          <div class="choose-grid">
+            <div class="choose-card" data-type="bp">
+              <span class="choose-icon">🩸</span>
+              <span class="choose-label">Blood Pressure</span>
+            </div>
+            <div class="choose-card" data-type="sugar">
+              <span class="choose-icon">🍬</span>
+              <span class="choose-label">Sugar Test</span>
+            </div>
+            <div class="choose-card" data-type="med">
+              <span class="choose-icon">💊</span>
+              <span class="choose-label">Medicine Taken</span>
+            </div>
+          </div>
+        </div>
+
+        <form id="entry-form" style="display: none">
+          <input type="hidden" id="entry-id" />
+          <button
+            type="button"
+            class="btn-secondary"
+            id="back-to-choose"
+            style="margin-bottom: 18px"
+          >
+            ← Back
+          </button>
+          <h2 id="form-title">📝 Add Reading</h2>
+
+          <label
+            >When <span class="hint">(filled in automatically)</span></label
+          >
+          <div class="quick-row">
+            <div class="quick-btn" id="quick-today">Today</div>
+            <div class="quick-btn" id="quick-yesterday">Yesterday</div>
+          </div>
+          <div class="datetime-grid">
+            <input type="date" id="date" required />
+            <input type="time" id="time" required />
+          </div>
+          <div class="time-presets">
+            <div class="time-preset" id="preset-now">🕐 Now</div>
+            <div class="time-preset" data-time="07:00">🌅 Morning</div>
+            <div class="time-preset" data-time="13:00">☀️ Afternoon</div>
+            <div class="time-preset" data-time="18:30">🌇 Evening</div>
+            <div class="time-preset" data-time="21:30">🌙 Night</div>
+          </div>
+
+          <div class="section-block bp" id="section-bp" style="display: none">
+            <div class="section-title">
+              <span class="icon-badge">🩸</span> Blood Pressure
+            </div>
+            <div class="grid">
+              <div>
+                <label for="systolic">Top Number</label>
+                <div class="stepper">
+                  <div class="stepper-btn" data-step="systolic" data-dir="-1">
+                    −
+                  </div>
+                  <input
+                    type="number"
+                    inputmode="numeric"
+                    id="systolic"
+                    min="50"
+                    max="300"
+                    placeholder="120"
+                  />
+                  <div class="stepper-btn" data-step="systolic" data-dir="1">
+                    +
+                  </div>
+                </div>
+              </div>
+              <div>
+                <label for="diastolic">Bottom Number</label>
+                <div class="stepper">
+                  <div class="stepper-btn" data-step="diastolic" data-dir="-1">
+                    −
+                  </div>
+                  <input
+                    type="number"
+                    inputmode="numeric"
+                    id="diastolic"
+                    min="30"
+                    max="200"
+                    placeholder="80"
+                  />
+                  <div class="stepper-btn" data-step="diastolic" data-dir="1">
+                    +
+                  </div>
+                </div>
+              </div>
+              <div>
+                <label for="pulse">Pulse (optional)</label>
+                <div class="stepper">
+                  <div class="stepper-btn" data-step="pulse" data-dir="-1">
+                    −
+                  </div>
+                  <input
+                    type="number"
+                    inputmode="numeric"
+                    id="pulse"
+                    min="20"
+                    max="250"
+                    placeholder="72"
+                  />
+                  <div class="stepper-btn" data-step="pulse" data-dir="1">
+                    +
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div
+            class="section-block sugar"
+            id="section-sugar"
+            style="display: none"
+          >
+            <div class="section-title">
+              <span class="icon-badge">🍬</span> Sugar Test
+            </div>
+            <div class="grid">
+              <div>
+                <label for="sugar-value"
+                  >Sugar Level
+                  <span class="hint"
+                    >(pick the unit your meter shows)</span
+                  ></label
+                >
+                <div class="unit-toggle" id="sugar-unit-toggle">
+                  <button
+                    type="button"
+                    class="unit-btn active"
+                    data-unit="mgdl"
+                  >
+                    mg/dL
+                  </button>
+                  <button type="button" class="unit-btn" data-unit="mmol">
+                    mmol/L
+                  </button>
+                </div>
+                <div class="stepper">
+                  <div
+                    class="stepper-btn"
+                    data-step="sugar-value"
+                    data-dir="-1"
+                  >
+                    −
+                  </div>
+                  <input
+                    type="number"
+                    inputmode="decimal"
+                    id="sugar-value"
+                    step="1"
+                    min="20"
+                    max="700"
+                    placeholder="110"
+                  />
+                  <div class="stepper-btn" data-step="sugar-value" data-dir="1">
+                    +
+                  </div>
+                </div>
+              </div>
+              <div>
+                <label for="sugar-type">When Tested</label>
+                <select id="sugar-type">
+                  <option value="fasting">Fasting (before food)</option>
+                  <option value="after_meal">After Meal</option>
+                  <option value="random">Random / Any time</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="section-block med" id="section-med" style="display: none">
+            <div class="section-title">
+              <span class="icon-badge">💊</span> Medicine
+            </div>
+            <div class="subtitle" style="margin-bottom: 12px">
+              Tap a name to select it. Don't see it? Tap "+ New Medicine" — you
+              can rename it anytime later.
+            </div>
+            <div class="med-chip-row" id="med-chip-row"></div>
+            <div
+              class="inline-add-form"
+              id="quick-add-med-form"
+              style="display: none"
+            >
+              <input
+                type="text"
+                id="quick-add-med-name"
+                placeholder="Type medicine name"
+              />
+              <button
+                type="button"
+                class="btn-primary btn-sm"
+                id="quick-add-med-save"
+              >
+                Add & Select
+              </button>
+              <button
+                type="button"
+                class="btn-secondary btn-sm"
+                id="quick-add-med-cancel"
+              >
+                Cancel
+              </button>
+            </div>
+            <div class="selected-meds-detail" id="selected-meds-detail"></div>
+          </div>
+
+          <div class="full" style="margin-top: 18px">
+            <label for="notes">Anything Else? (optional)</label>
+            <textarea
+              id="notes"
+              placeholder="e.g. felt dizzy, headache..."
+            ></textarea>
+          </div>
+
+          <div class="actions">
+            <button type="submit" class="btn-primary" id="submit-btn">
+              ✅ Save My Reading
+            </button>
+            <button
+              type="button"
+              class="btn-secondary"
+              id="cancel-edit"
+              style="display: none"
+            >
+              Cancel Edit
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <div class="card meds-card">
+        <h2>💊 My Medicines</h2>
+        <div class="subtitle" style="margin-bottom: 14px">
+          Tap a medicine's name to rename or fix it. Tap ✕ to remove it.
+        </div>
+        <div class="med-chip-row" id="med-manage-row"></div>
+        <div class="inline-add-form" id="manage-add-form" style="display: none">
+          <input type="hidden" id="manage-med-id" />
+          <input
+            type="text"
+            id="manage-med-name"
+            placeholder="Medicine name (e.g. Amlodipine)"
+          />
+          <input
+            type="text"
+            id="manage-med-dose"
+            placeholder="Usual dose (e.g. 5mg, optional)"
+          />
+          <button type="button" class="btn-primary btn-sm" id="manage-add-save">
+            Save
+          </button>
+          <button
+            type="button"
+            class="btn-secondary btn-sm"
+            id="manage-add-cancel"
+          >
+            Cancel
+          </button>
+        </div>
+        <button
+          type="button"
+          class="med-chip-add"
+          id="manage-add-open"
+          style="margin-top: 12px"
+        >
+          + Add Medicine
+        </button>
+      </div>
+
+      <div class="card">
+        <div class="toolbar">
+          <h2 style="margin: 0">📋 Records</h2>
+          <div class="actions" style="margin-top: 0">
+            <button class="btn-secondary" id="download-csv">⬇ CSV</button>
+            <button class="btn-secondary" id="print-btn">🖨 Print / PDF</button>
+            <button class="btn-secondary" id="email-pdf-btn">✉️ Email PDF</button>
+          </div>
+        </div>
+        <div class="no-print" style="margin-bottom: 16px">
+          <label for="patient-name"
+            >Patient Name (shown on printed report)</label
+          >
+          <input
+            type="text"
+            id="patient-name"
+            placeholder="e.g. Raja Ram Amatya"
+          />
+        </div>
+        <div class="count" id="count-label"></div>
+        <div id="records-list"></div>
+        <div class="empty" id="empty-state" style="display: none">
+          <div class="big">🩺</div>
+          No readings yet. Add the first one above.
+        </div>
+      </div>
+
+      <footer class="app-footer no-print">
+        © <span id="footer-year"></span> Health Log · Made with ❤️ by Ranjan
+        <button type="button" class="lock-again-btn" id="lock-again-btn">
+          🔒 Sign Out
+        </button>
+      </footer>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <div class="modal-overlay" id="modal-overlay">
+      <div class="modal-box">
+        <div class="modal-msg" id="modal-msg"></div>
+        <div class="actions">
+          <button type="button" class="btn-secondary" id="modal-cancel">
+            Cancel
+          </button>
+          <button type="button" class="btn-danger" id="modal-confirm">
+            Yes, Delete
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script>
+      /* ---------- Storage that never throws ----------
+         Some browsers (Safari especially, and some setups) block or
+         restrict localStorage when a page is opened directly as a file
+         (file://) instead of served over http(s). Every call below is
+         wrapped so a blocked storage never breaks the app itself — it
+         just means "remember me" won't work in that one browser. */
+      const safeStorage = {
+        get(key) {
+          try {
+            return localStorage.getItem(key);
+          } catch (e) {
+            return null;
+          }
+        },
+        set(key, value) {
+          try {
+            localStorage.setItem(key, value);
+            return true;
+          } catch (e) {
+            return false;
+          }
+        },
+        remove(key) {
+          try {
+            localStorage.removeItem(key);
+          } catch (e) {}
+        },
+      };
+
+      /* ---------- Shared cloud storage + real login (Firebase) ----------
+         Records are kept in one shared Firestore document, and access is
+         gated by a real Firebase email/password sign-in — checked by
+         Firebase's servers, never stored as plain text on this page. The
+         Firestore security rule (set in the Firebase console) only allows
+         reads/writes from a signed-in email/password account, not from
+         random visitors. If Firebase is ever unreachable, the app quietly
+         falls back to this browser's local copy so it never fully breaks. */
+      const firebaseConfig = {
+        apiKey: "AIzaSyCGReG9nCwITbnR2sAM5DQErkU9JLp1l64",
+        authDomain: "medical-report-95e88.firebaseapp.com",
+        projectId: "medical-report-95e88",
+        storageBucket: "medical-report-95e88.firebasestorage.app",
+        messagingSenderId: "532410798047",
+        appId: "1:532410798047:web:ea830956dc8685b75b7e6a",
+      };
+      let firebaseReady = false;
+      let sharedDocRef = null;
+      let auth = null;
+      try {
+        firebase.initializeApp(firebaseConfig);
+        auth = firebase.auth();
+        sharedDocRef = firebase.firestore().collection("health_log").doc("shared");
+      } catch (err) {
+        console.error("Firebase init failed, using local storage only:", err);
+      }
+
+      function attachFirestoreSync() {
+        if (!sharedDocRef) return;
+        sharedDocRef.onSnapshot(
+          (docSnap) => {
+            if (docSnap.exists) {
+              const data = docSnap.data();
+              entries = data.entries || [];
+              medicines = data.medicines || [];
+              save(ENTRIES_KEY, entries, { skipCloud: true });
+              save(MEDS_KEY, medicines, { skipCloud: true });
+              renderRecords();
+              renderMedChips();
+              renderManageChips();
+            } else {
+              // First ever run — seed the shared doc with whatever's local.
+              sharedDocRef.set({ entries, medicines });
+            }
+          },
+          (err) => console.error("Firestore sync error:", err),
+        );
+      }
+
+      function syncKeyToCloud(key, val) {
+        if (!firebaseReady || !sharedDocRef) return;
+        const field =
+          key === ENTRIES_KEY ? "entries" : key === MEDS_KEY ? "medicines" : null;
+        if (!field) return;
+        sharedDocRef
+          .set({ [field]: val }, { merge: true })
+          .catch((err) => console.error("Firestore write failed:", err));
+      }
+
+      /* ---------- Sign-in gate ----------
+         Only a password box is shown. Behind the scenes it signs in to a
+         fixed Firebase account (this email isn't a secret — it's just an
+         account identifier, the same way a username isn't a password).
+         The actual password is verified by Firebase's servers, never
+         stored in this page. Change ACCOUNT_EMAIL if you create a
+         different Firebase Authentication user. */
+      const ACCOUNT_EMAIL = "ranjan@healthlog.local";
+
+      const lockScreen = document.getElementById("lock-screen");
+      const appWrap = document.getElementById("app-wrap");
+      const lockPasswordField = document.getElementById("lock-password");
+      const lockError = document.getElementById("lock-error");
+      const lockShowBtn = document.getElementById("lock-show-btn");
+      const lockUnlockBtn = document.getElementById("lock-unlock-btn");
+
+      lockShowBtn.addEventListener("click", () => {
+        const showing = lockPasswordField.type === "text";
+        lockPasswordField.type = showing ? "password" : "text";
+        lockShowBtn.textContent = showing ? "👁" : "🙈";
+      });
+
+      function unlockApp() {
+        lockScreen.hidden = true;
+        appWrap.hidden = false;
+      }
+      function lockUI() {
+        appWrap.hidden = true;
+        lockScreen.hidden = false;
+        lockPasswordField.value = "";
+        lockPasswordField.focus();
+      }
+
+      const LOGIN_ERROR_MESSAGES = {
+        "auth/wrong-password": "Incorrect password. Try again.",
+        "auth/invalid-credential": "Incorrect password. Try again.",
+        "auth/too-many-requests": "Too many attempts. Wait a bit and try again.",
+        "auth/network-request-failed": "Couldn't reach the sign-in server. Check your connection.",
+      };
+
+      function trySignIn() {
+        if (!auth) {
+          lockError.textContent = "Sign-in isn't available right now. Try again later.";
+          return;
+        }
+        const password = lockPasswordField.value;
+        if (!password) {
+          lockError.textContent = "Enter the password.";
+          return;
+        }
+        lockError.textContent = "";
+        lockUnlockBtn.disabled = true;
+        lockUnlockBtn.textContent = "Checking...";
+        auth
+          .signInWithEmailAndPassword(ACCOUNT_EMAIL, password)
+          .catch((err) => {
+            lockError.textContent =
+              LOGIN_ERROR_MESSAGES[err.code] || "Couldn't sign in. Try again.";
+            lockPasswordField.value = "";
+            lockPasswordField.focus();
+          })
+          .finally(() => {
+            lockUnlockBtn.disabled = false;
+            lockUnlockBtn.textContent = "Unlock";
+          });
+      }
+      lockUnlockBtn.addEventListener("click", trySignIn);
+      lockPasswordField.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          trySignIn();
+        }
+      });
+      document
+        .getElementById("lock-again-btn")
+        .addEventListener("click", () => {
+          if (auth) auth.signOut();
+        });
+
+      if (auth) {
+        auth.onAuthStateChanged((user) => {
+          if (user) {
+            firebaseReady = true;
+            unlockApp();
+            attachFirestoreSync();
+          } else {
+            firebaseReady = false;
+            lockUI();
+          }
+        });
+      }
+
+      const ENTRIES_KEY = "bp_medicine_log_entries_v3";
+      const MEDS_KEY = "bp_medicine_log_medicines_v1";
+
+      function load(key, fallback) {
+        try {
+          const raw = safeStorage.get(key);
+          return raw ? JSON.parse(raw) : fallback;
+        } catch (e) {
+          return fallback;
+        }
+      }
+      function save(key, val, opts) {
+        safeStorage.set(key, JSON.stringify(val));
+        if (!opts || !opts.skipCloud) {
+          syncKeyToCloud(key, val);
+        }
+      }
+
+      let entries = load(ENTRIES_KEY, []);
+      let medicines = load(MEDS_KEY, []);
+      let selectedMeds = {};
+
+      // migrate older data
+      (function migrate() {
+        if (entries.length > 0) return;
+        const v2 = safeStorage.get("bp_medicine_log_entries_v2");
+        if (v2) {
+          try {
+            entries = JSON.parse(v2).map((e) => ({ ...e, sugar: null }));
+            save(ENTRIES_KEY, entries);
+            return;
+          } catch (e) {}
+        }
+        const v1 = safeStorage.get("bp_medicine_log_entries");
+        if (v1) {
+          try {
+            entries = JSON.parse(v1).map((e) => ({
+              id: e.id,
+              date: e.date,
+              time: e.time,
+              systolic: e.systolic,
+              diastolic: e.diastolic,
+              pulse: e.pulse,
+              sugar: null,
+              meds: e.medicine
+                ? [
+                    {
+                      name: e.medicine,
+                      dose: e.dose || "",
+                      time: e.medtime || "",
+                    },
+                  ]
+                : [],
+              notes: e.notes || "",
+            }));
+            save(ENTRIES_KEY, entries);
+          } catch (e) {}
+        }
+      })();
+
+      const form = document.getElementById("entry-form");
+      const idField = document.getElementById("entry-id");
+      const dateField = document.getElementById("date");
+      const timeField = document.getElementById("time");
+      const systolicField = document.getElementById("systolic");
+      const diastolicField = document.getElementById("diastolic");
+      const pulseField = document.getElementById("pulse");
+      const sugarValueField = document.getElementById("sugar-value");
+      const sugarTypeField = document.getElementById("sugar-type");
+      const sugarUnitToggle = document.getElementById("sugar-unit-toggle");
+      const notesField = document.getElementById("notes");
+      const submitBtn = document.getElementById("submit-btn");
+      const cancelEditBtn = document.getElementById("cancel-edit");
+      const formTitle = document.getElementById("form-title");
+      const medChipRow = document.getElementById("med-chip-row");
+      const selectedMedsDetail = document.getElementById(
+        "selected-meds-detail",
+      );
+      const medManageRow = document.getElementById("med-manage-row");
+      const recordsList = document.getElementById("records-list");
+      const emptyState = document.getElementById("empty-state");
+      const countLabel = document.getElementById("count-label");
+
+      function todayStr() {
+        return new Date().toISOString().slice(0, 10);
+      }
+      function yesterdayStr() {
+        const d = new Date();
+        d.setDate(d.getDate() - 1);
+        return d.toISOString().slice(0, 10);
+      }
+      function nowStr() {
+        return new Date().toTimeString().slice(0, 5);
+      }
+      dateField.value = todayStr();
+      timeField.value = nowStr();
+
+      document.getElementById("quick-today").addEventListener("click", () => {
+        dateField.value = todayStr();
+        markQuickActive("quick-today");
+      });
+      document
+        .getElementById("quick-yesterday")
+        .addEventListener("click", () => {
+          dateField.value = yesterdayStr();
+          markQuickActive("quick-yesterday");
+        });
+      function markQuickActive(id) {
+        document
+          .querySelectorAll(".quick-btn")
+          .forEach((b) => b.classList.remove("active"));
+        document.getElementById(id).classList.add("active");
+      }
+      document.getElementById("preset-now").addEventListener("click", () => {
+        timeField.value = nowStr();
+      });
+      document.querySelectorAll(".time-preset[data-time]").forEach((el) => {
+        el.addEventListener("click", () => {
+          timeField.value = el.getAttribute("data-time");
+        });
+      });
+
+      /* ---------- Dynamic step flow: choose what to log, then show only that ---------- */
+      let activeTypes = new Set();
+      const stepChoose = document.getElementById("step-choose");
+      const stepFormCard = document.getElementById("entry-form");
+      const TYPE_TITLES = {
+        bp: "🩸 Blood Pressure Reading",
+        sugar: "🍬 Sugar Test Reading",
+        med: "💊 Medicine Taken",
+      };
+
+      function updateSectionVisibility() {
+        document.getElementById("section-bp").style.display = activeTypes.has(
+          "bp",
+        )
+          ? ""
+          : "none";
+        document.getElementById("section-sugar").style.display =
+          activeTypes.has("sugar") ? "" : "none";
+        document.getElementById("section-med").style.display = activeTypes.has(
+          "med",
+        )
+          ? ""
+          : "none";
+      }
+
+      function autoSetNow() {
+        dateField.value = todayStr();
+        timeField.value = nowStr();
+        markQuickActive("quick-today");
+      }
+
+      function showStepForm() {
+        stepChoose.style.display = "none";
+        stepFormCard.style.display = "";
+      }
+      function showStepChoose() {
+        stepChoose.style.display = "";
+        stepFormCard.style.display = "none";
+      }
+
+      document.querySelectorAll(".choose-card").forEach((card) => {
+        card.addEventListener("click", () => {
+          const type = card.getAttribute("data-type");
+          activeTypes = new Set([type]);
+          updateSectionVisibility();
+          autoSetNow();
+          formTitle.textContent = TYPE_TITLES[type] || "📝 Add Reading";
+          showStepForm();
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        });
+      });
+
+      document
+        .getElementById("back-to-choose")
+        .addEventListener("click", () => {
+          resetForm();
+          showStepChoose();
+        });
+
+      /* ---------- Sugar unit (mg/dL vs mmol/L) ---------- */
+      const SUGAR_UNIT_KEY = "bp_medicine_log_sugar_unit";
+      const SUGAR_UNIT_CONFIG = {
+        mgdl: { min: 20, max: 700, step: 1, placeholder: "110", default: 100 },
+        mmol: {
+          min: 1.1,
+          max: 33.3,
+          step: 0.1,
+          placeholder: "6.1",
+          default: 5.5,
+        },
+      };
+      let sugarUnit = safeStorage.get(SUGAR_UNIT_KEY) || "mgdl";
+      function sugarUnitLabel(unit) {
+        return unit === "mmol" ? "mmol/L" : "mg/dL";
+      }
+      function roundToUnit(value, unit) {
+        return unit === "mmol"
+          ? Math.round(value * 10) / 10
+          : Math.round(value);
+      }
+      function convertSugarValue(value, fromUnit, toUnit) {
+        if (fromUnit === toUnit || !value) return value;
+        const mgdl = fromUnit === "mmol" ? value * 18 : value;
+        const converted = toUnit === "mmol" ? mgdl / 18 : mgdl;
+        return roundToUnit(converted, toUnit);
+      }
+      function applySugarUnit(unit, { convert = false } = {}) {
+        const prevUnit = sugarUnit;
+        const cfg = SUGAR_UNIT_CONFIG[unit];
+        sugarUnit = unit;
+        safeStorage.set(SUGAR_UNIT_KEY, unit);
+        sugarValueField.min = cfg.min;
+        sugarValueField.max = cfg.max;
+        sugarValueField.step = cfg.step;
+        sugarValueField.placeholder = cfg.placeholder;
+        if (convert && sugarValueField.value) {
+          sugarValueField.value = convertSugarValue(
+            Number(sugarValueField.value),
+            prevUnit,
+            unit,
+          );
+        }
+        sugarUnitToggle.querySelectorAll(".unit-btn").forEach((b) => {
+          b.classList.toggle("active", b.getAttribute("data-unit") === unit);
+        });
+      }
+      sugarUnitToggle.querySelectorAll(".unit-btn").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          applySugarUnit(btn.getAttribute("data-unit"), { convert: true });
+        });
+      });
+      applySugarUnit(sugarUnit);
+
+      /* ---------- Number steppers ---------- */
+      document.querySelectorAll(".stepper-btn").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const fieldId = btn.getAttribute("data-step");
+          const dir = Number(btn.getAttribute("data-dir"));
+          const input = document.getElementById(fieldId);
+          const min = Number(input.min) || 0;
+          const max = Number(input.max) || 999;
+          const step =
+            fieldId === "sugar-value" ? SUGAR_UNIT_CONFIG[sugarUnit].step : 1;
+          let current = Number(input.value);
+          if (!input.value) {
+            const defaults = {
+              systolic: 120,
+              diastolic: 80,
+              pulse: 72,
+              "sugar-value": SUGAR_UNIT_CONFIG[sugarUnit].default,
+            };
+            current = defaults[fieldId] || min;
+          } else {
+            current += dir * step;
+          }
+          current = Math.max(min, Math.min(max, current));
+          if (fieldId === "sugar-value")
+            current = roundToUnit(current, sugarUnit);
+          input.value = current;
+        });
+      });
+
+      /* ---------- Toast ---------- */
+      let toastTimer = null;
+      function showToast(msg) {
+        const toast = document.getElementById("toast");
+        toast.textContent = msg;
+        toast.classList.add("show");
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => toast.classList.remove("show"), 2200);
+      }
+
+      /* ---------- Custom confirm modal ---------- */
+      const modalOverlay = document.getElementById("modal-overlay");
+      const modalMsg = document.getElementById("modal-msg");
+      const modalConfirm = document.getElementById("modal-confirm");
+      const modalCancel = document.getElementById("modal-cancel");
+      let modalConfirmCallback = null;
+      function askConfirm(message, onConfirm) {
+        modalMsg.textContent = message;
+        modalConfirmCallback = onConfirm;
+        modalOverlay.classList.add("show");
+      }
+      function closeModal() {
+        modalOverlay.classList.remove("show");
+        modalConfirmCallback = null;
+      }
+      modalCancel.addEventListener("click", closeModal);
+      modalOverlay.addEventListener("click", (e) => {
+        if (e.target === modalOverlay) closeModal();
+      });
+      modalConfirm.addEventListener("click", () => {
+        if (modalConfirmCallback) modalConfirmCallback();
+        closeModal();
+      });
+
+      function uid() {
+        return Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+      }
+      function escapeHtml(str) {
+        return String(str || "").replace(
+          /[&<>"']/g,
+          (c) =>
+            ({
+              "&": "&amp;",
+              "<": "&lt;",
+              ">": "&gt;",
+              '"': "&quot;",
+              "'": "&#39;",
+            })[c],
+        );
+      }
+      function formatDate(dstr) {
+        const [y, m, d] = dstr.split("-");
+        return `${d}/${m}/${y}`;
+      }
+      const MONTH_NAMES = [
+        "Jan",
+        "Feb",
+        "Mar",
+        "Apr",
+        "May",
+        "Jun",
+        "Jul",
+        "Aug",
+        "Sep",
+        "Oct",
+        "Nov",
+        "Dec",
+      ];
+      const WEEKDAY_NAMES = [
+        "Sunday",
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday",
+      ];
+      function formatDateLong(dstr) {
+        const [y, m, d] = dstr.split("-").map(Number);
+        return `${d} ${MONTH_NAMES[m - 1]} ${y}`;
+      }
+      function weekdayLabel(dstr) {
+        const [y, m, d] = dstr.split("-").map(Number);
+        return WEEKDAY_NAMES[new Date(y, m - 1, d).getDay()];
+      }
+      function formatTime(tstr) {
+        if (!tstr) return "";
+        const [h, m] = tstr.split(":").map(Number);
+        const ampm = h >= 12 ? "PM" : "AM";
+        const h12 = h % 12 === 0 ? 12 : h % 12;
+        return `${h12}:${String(m).padStart(2, "0")} ${ampm}`;
+      }
+      function bpCategory(sys, dia) {
+        if (sys >= 140 || dia >= 90) return { label: "High", cls: "bp-high" };
+        if (sys >= 130 || dia >= 80)
+          return { label: "Elevated", cls: "bp-elevated" };
+        return { label: "Normal", cls: "bp-normal" };
+      }
+      function sugarCategory(value, type, unit) {
+        const t =
+          unit === "mmol"
+            ? {
+                fastingHigh: 7.0,
+                fastingElevated: 5.6,
+                high: 11.1,
+                elevated: 7.8,
+              }
+            : {
+                fastingHigh: 126,
+                fastingElevated: 100,
+                high: 200,
+                elevated: 140,
+              };
+        if (type === "fasting") {
+          if (value >= t.fastingHigh) return { label: "High", cls: "bp-high" };
+          if (value >= t.fastingElevated)
+            return { label: "Elevated", cls: "bp-elevated" };
+          return { label: "Normal", cls: "bp-normal" };
+        }
+        if (value >= t.high) return { label: "High", cls: "bp-high" };
+        if (value >= t.elevated)
+          return { label: "Elevated", cls: "bp-elevated" };
+        return { label: "Normal", cls: "bp-normal" };
+      }
+      function sugarTypeLabel(type) {
+        return (
+          { fasting: "Fasting", after_meal: "After Meal", random: "Random" }[
+            type
+          ] || type
+        );
+      }
+
+      /* ---------- Medicine chip picker ---------- */
+      function renderMedChips() {
+        medChipRow.innerHTML = "";
+        for (const med of medicines) {
+          const chip = document.createElement("div");
+          chip.className =
+            "med-chip" + (selectedMeds[med.id] ? " selected" : "");
+          chip.textContent = med.name;
+          chip.addEventListener("click", () => toggleMedSelect(med));
+          medChipRow.appendChild(chip);
+        }
+        const addChip = document.createElement("div");
+        addChip.className = "med-chip-add";
+        addChip.id = "quick-add-med-open";
+        addChip.textContent = "+ New Medicine";
+        addChip.addEventListener("click", () => {
+          quickAddMedForm.style.display = "flex";
+          addChip.style.display = "none";
+          quickAddMedName.focus();
+        });
+        medChipRow.appendChild(addChip);
+        renderSelectedMedsDetail();
+      }
+
+      const quickAddMedForm = document.getElementById("quick-add-med-form");
+      const quickAddMedName = document.getElementById("quick-add-med-name");
+      function closeQuickAddMedForm() {
+        quickAddMedForm.style.display = "none";
+        quickAddMedName.value = "";
+        const openChip = document.getElementById("quick-add-med-open");
+        if (openChip) openChip.style.display = "";
+      }
+      document
+        .getElementById("quick-add-med-cancel")
+        .addEventListener("click", closeQuickAddMedForm);
+      document
+        .getElementById("quick-add-med-save")
+        .addEventListener("click", quickAddMedicine);
+      quickAddMedName.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          quickAddMedicine();
+        }
+      });
+      function quickAddMedicine() {
+        const name = quickAddMedName.value.trim();
+        if (!name) {
+          quickAddMedName.focus();
+          return;
+        }
+        const newMed = { id: uid(), name, dose: "" };
+        medicines.push(newMed);
+        save(MEDS_KEY, medicines);
+        selectedMeds[newMed.id] = {
+          name: newMed.name,
+          dose: "",
+          time: timeField.value || nowStr(),
+          timing: "anytime",
+        };
+        closeQuickAddMedForm();
+        renderManageChips();
+        renderMedChips();
+        showToast(
+          `"${name}" added — you can rename it anytime in My Medicines`,
+        );
+      }
+      const MEAL_TIMING_OPTIONS = [
+        { value: "before_meal", label: "🍽️ Before Meal" },
+        { value: "after_meal", label: "🍽️ After Meal" },
+        { value: "with_meal", label: "🍽️ With Meal" },
+        { value: "anytime", label: "🕐 Anytime" },
+      ];
+      function timingLabel(val) {
+        const found = MEAL_TIMING_OPTIONS.find((o) => o.value === val);
+        return found ? found.label.replace(/^\S+\s/, "") : "Anytime";
+      }
+
+      function toggleMedSelect(med) {
+        if (selectedMeds[med.id]) delete selectedMeds[med.id];
+        else
+          selectedMeds[med.id] = {
+            name: med.name,
+            dose: med.dose || "",
+            time: timeField.value || nowStr(),
+            timing: "anytime",
+          };
+        renderMedChips();
+      }
+      function renderSelectedMedsDetail() {
+        selectedMedsDetail.innerHTML = "";
+        for (const id of Object.keys(selectedMeds)) {
+          const info = selectedMeds[id];
+          const row = document.createElement("div");
+          row.className = "selected-med-row";
+          const timingOptionsHtml = MEAL_TIMING_OPTIONS.map(
+            (o) =>
+              `<option value="${o.value}"${info.timing === o.value ? " selected" : ""}>${o.label}</option>`,
+          ).join("");
+          row.innerHTML = `
+      <span class="name">💊 ${escapeHtml(info.name)} <span class="deselect" data-deselect="${id}">✕ remove</span></span>
+      <div class="fields-row">
+        <div class="mini-field">
+          <span class="mini-label">Dose</span>
+          <input type="text" class="dose-field" placeholder="e.g. 5mg">
+        </div>
+        <div class="mini-field">
+          <span class="mini-label">When</span>
+          <select class="timing-field">${timingOptionsHtml}</select>
+        </div>
+        <div class="mini-field">
+          <span class="mini-label">Time</span>
+          <input type="time" class="time-field">
+        </div>
+      </div>
+    `;
+          row.querySelector(".dose-field").value = info.dose;
+          row.querySelector(".time-field").value = info.time;
+          row.querySelector(".deselect").addEventListener("click", () => {
+            delete selectedMeds[id];
+            renderMedChips();
+          });
+          row.querySelector(".dose-field").addEventListener("input", (e) => {
+            selectedMeds[id].dose = e.target.value;
+          });
+          row.querySelector(".timing-field").addEventListener("change", (e) => {
+            selectedMeds[id].timing = e.target.value;
+          });
+          row.querySelector(".time-field").addEventListener("input", (e) => {
+            selectedMeds[id].time = e.target.value;
+          });
+          selectedMedsDetail.appendChild(row);
+        }
+      }
+
+      /* ---------- Medicine library management (add, rename, remove) ---------- */
+      function renderManageChips() {
+        medManageRow.innerHTML = "";
+        for (const med of medicines) {
+          const chip = document.createElement("div");
+          chip.className = "med-chip";
+          chip.innerHTML = `<span data-edit="${med.id}">${escapeHtml(med.name)}${med.dose ? " · " + escapeHtml(med.dose) : ""}</span><span class="del-x" data-del="${med.id}">✕</span>`;
+          medManageRow.appendChild(chip);
+        }
+      }
+      medManageRow.addEventListener("click", (ev) => {
+        const delId = ev.target.getAttribute("data-del");
+        const editId = ev.target.getAttribute("data-edit");
+        if (delId) {
+          askConfirm("Remove this medicine from your list?", () => {
+            medicines = medicines.filter((m) => m.id !== delId);
+            delete selectedMeds[delId];
+            save(MEDS_KEY, medicines);
+            renderManageChips();
+            renderMedChips();
+            showToast("Medicine removed");
+          });
+        }
+        if (editId) openManageForm(medicines.find((m) => m.id === editId));
+      });
+      const manageAddOpen = document.getElementById("manage-add-open");
+      const manageAddForm = document.getElementById("manage-add-form");
+      const manageMedId = document.getElementById("manage-med-id");
+      const manageMedName = document.getElementById("manage-med-name");
+      const manageMedDose = document.getElementById("manage-med-dose");
+      const manageAddSave = document.getElementById("manage-add-save");
+
+      function openManageForm(med) {
+        manageAddForm.style.display = "flex";
+        manageAddOpen.style.display = "none";
+        manageMedId.value = med ? med.id : "";
+        manageMedName.value = med ? med.name : "";
+        manageMedDose.value = med ? med.dose || "" : "";
+        manageAddSave.textContent = med ? "Save Changes" : "Add";
+        manageMedName.focus();
+      }
+      function closeManageForm() {
+        manageAddForm.style.display = "none";
+        manageAddOpen.style.display = "inline-flex";
+        manageMedId.value = "";
+        manageMedName.value = "";
+        manageMedDose.value = "";
+      }
+      manageAddOpen.addEventListener("click", () => openManageForm(null));
+      document
+        .getElementById("manage-add-cancel")
+        .addEventListener("click", closeManageForm);
+      manageAddSave.addEventListener("click", saveManageMedicine);
+      manageMedName.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          saveManageMedicine();
+        }
+      });
+      manageMedDose.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          saveManageMedicine();
+        }
+      });
+      function saveManageMedicine() {
+        const name = manageMedName.value.trim();
+        if (!name) {
+          manageMedName.focus();
+          return;
+        }
+        const dose = manageMedDose.value.trim();
+        const editId = manageMedId.value;
+        if (editId) {
+          const med = medicines.find((m) => m.id === editId);
+          if (med) {
+            med.name = name;
+            med.dose = dose;
+          }
+          showToast("Medicine updated");
+        } else {
+          medicines.push({ id: uid(), name, dose });
+          showToast("Medicine added");
+        }
+        save(MEDS_KEY, medicines);
+        closeManageForm();
+        renderManageChips();
+        renderMedChips();
+      }
+
+      /* ---------- Entry form submit ---------- */
+      form.addEventListener("submit", (ev) => {
+        ev.preventDefault();
+
+        if (activeTypes.size === 0) {
+          alert(
+            "Please tap what you want to log (Blood Pressure, Sugar, or Medicine) above.",
+          );
+          return;
+        }
+        if (
+          activeTypes.has("bp") &&
+          (!systolicField.value || !diastolicField.value)
+        ) {
+          alert(
+            "Please fill in both Blood Pressure numbers (or untap Blood Pressure above).",
+          );
+          return;
+        }
+        if (activeTypes.has("sugar") && !sugarValueField.value) {
+          alert("Please fill in the Sugar Level (or untap Sugar Test above).");
+          return;
+        }
+        if (activeTypes.has("med") && Object.keys(selectedMeds).length === 0) {
+          alert("Please tap at least one medicine (or untap Medicine above).");
+          return;
+        }
+
+        const hasBp =
+          activeTypes.has("bp") && systolicField.value && diastolicField.value;
+        const hasSugar = activeTypes.has("sugar") && !!sugarValueField.value;
+        const meds = activeTypes.has("med")
+          ? Object.values(selectedMeds).map((m) => ({ ...m }))
+          : [];
+        const id = idField.value || uid();
+        const wasEdit = !!idField.value;
+        const entry = {
+          id,
+          date: dateField.value,
+          time: timeField.value,
+          systolic: hasBp ? systolicField.value : "",
+          diastolic: hasBp ? diastolicField.value : "",
+          pulse: pulseField.value,
+          sugar: hasSugar
+            ? {
+                value: sugarValueField.value,
+                type: sugarTypeField.value,
+                unit: sugarUnit,
+              }
+            : null,
+          meds,
+          notes: notesField.value.trim(),
+        };
+        const existingIndex = entries.findIndex((e) => e.id === id);
+        if (existingIndex >= 0) entries[existingIndex] = entry;
+        else entries.push(entry);
+        save(ENTRIES_KEY, entries);
+        resetForm();
+        showStepChoose();
+        renderRecords();
+        showToast(wasEdit ? "✅ Reading Updated!" : "✅ Saved! Reading added.");
+      });
+
+      function resetForm() {
+        form.reset();
+        idField.value = "";
+        dateField.value = todayStr();
+        timeField.value = nowStr();
+        sugarTypeField.value = "fasting";
+        selectedMeds = {};
+        activeTypes = new Set();
+        updateSectionVisibility();
+        submitBtn.textContent = "✅ Save My Reading";
+        formTitle.textContent = "📝 Add Reading";
+        cancelEditBtn.style.display = "none";
+        document
+          .querySelectorAll(".quick-btn")
+          .forEach((b) => b.classList.remove("active"));
+        document.getElementById("quick-today").classList.add("active");
+        renderMedChips();
+      }
+      cancelEditBtn.addEventListener("click", () => {
+        resetForm();
+        showStepChoose();
+      });
+      markQuickActive("quick-today");
+
+      /* ---------- Records list ---------- */
+      const expandedDates = new Set([todayStr()]);
+
+      function dateGroupLabel(dstr) {
+        if (dstr === todayStr()) return "Today";
+        if (dstr === yesterdayStr()) return "Yesterday";
+        return formatDate(dstr);
+      }
+
+      function buildRecordCard(e) {
+        const card = document.createElement("div");
+        card.className = "record-card";
+
+        const blocks = [];
+
+        if (e.systolic && e.diastolic) {
+          const cat = bpCategory(Number(e.systolic), Number(e.diastolic));
+          blocks.push(`
+      <div class="record-block">
+        <div class="record-block-label bp">🩸 Blood Pressure</div>
+        <div class="vitals-row bp">
+          <span class="vitals-num ${cat.cls}">${e.systolic}/${e.diastolic} <span class="unit">mmHg</span></span>
+          <span class="vitals-status ${cat.cls}">${cat.label}</span>
+          ${e.pulse ? `<span class="vitals-extra">❤️ Pulse ${escapeHtml(e.pulse)} bpm</span>` : ""}
+        </div>
+      </div>
+    `);
+        }
+
+        if (e.sugar) {
+          const unit = e.sugar.unit || "mgdl";
+          const cat = sugarCategory(Number(e.sugar.value), e.sugar.type, unit);
+          blocks.push(`
+      <div class="record-block">
+        <div class="record-block-label sugar">🍬 Sugar Test</div>
+        <div class="vitals-row sugar">
+          <span class="vitals-num ${cat.cls}">${e.sugar.value} <span class="unit">${sugarUnitLabel(unit)}</span></span>
+          <span class="vitals-status ${cat.cls}">${sugarTypeLabel(e.sugar.type)} · ${cat.label}</span>
+        </div>
+      </div>
+    `);
+        }
+
+        if (e.meds && e.meds.length > 0) {
+          const medsHtml = e.meds
+            .map((m) => {
+              const metaParts = [];
+              if (m.dose) metaParts.push(escapeHtml(m.dose));
+              metaParts.push(timingLabel(m.timing));
+              if (m.time) metaParts.push(formatTime(m.time));
+              return `<span class="med-pill"><span class="med-name">${escapeHtml(m.name)}</span> <span class="meta">— ${metaParts.join(" · ")}</span></span>`;
+            })
+            .join("");
+          blocks.push(`
+      <div class="record-block">
+        <div class="record-block-label med">💊 Medicines</div>
+        <div class="record-meds">${medsHtml}</div>
+      </div>
+    `);
+        }
+
+        if (e.notes) {
+          blocks.push(`
+      <div class="record-block">
+        <div class="record-block-label notes">📝 Notes</div>
+        <div class="record-notes">${escapeHtml(e.notes)}</div>
+      </div>
+    `);
+        }
+
+        card.innerHTML = `
+    <div class="record-main">
+      <div class="record-datetime">🕐 ${formatTime(e.time)}</div>
+      ${blocks.join("")}
+    </div>
+    <div class="record-actions no-print">
+      <button class="btn-secondary" data-edit="${e.id}">Edit</button>
+      <button class="btn-danger" data-delete="${e.id}">Delete</button>
+    </div>
+  `;
+        return card;
+      }
+
+      function renderRecords() {
+        const sorted = [...entries].sort((a, b) =>
+          (b.date + " " + b.time).localeCompare(a.date + " " + a.time),
+        );
+        recordsList.innerHTML = "";
+        emptyState.style.display = sorted.length === 0 ? "block" : "none";
+        countLabel.textContent = `${entries.length} record${entries.length === 1 ? "" : "s"}`;
+        if (sorted.length === 0) return;
+
+        // group by date, preserving descending order
+        const dateOrder = [];
+        const byDate = {};
+        for (const e of sorted) {
+          if (!byDate[e.date]) {
+            byDate[e.date] = [];
+            dateOrder.push(e.date);
+          }
+          byDate[e.date].push(e);
+        }
+
+        for (const dstr of dateOrder) {
+          const group = document.createElement("div");
+          group.className = "date-group";
+          const isOpen = expandedDates.has(dstr);
+
+          const label = dateGroupLabel(dstr);
+          const isRelativeLabel = label === "Today" || label === "Yesterday";
+          const header = document.createElement("div");
+          header.className = "date-group-header";
+          header.setAttribute("data-toggle-date", dstr);
+          header.innerHTML = `
+      <span class="date-group-title">📅 ${label}${isRelativeLabel ? ` <span class="date-group-sub">${formatDate(dstr)}</span>` : ""}</span>
+      <span class="date-group-count">${byDate[dstr].length} record${byDate[dstr].length === 1 ? "" : "s"}</span>
+      <span class="date-group-chevron ${isOpen ? "open" : ""}">▾</span>
+    `;
+          group.appendChild(header);
+
+          const body = document.createElement("div");
+          body.className = "date-group-body" + (isOpen ? " open" : "");
+          if (isOpen) body.style.maxHeight = "none";
+          for (const e of byDate[dstr]) body.appendChild(buildRecordCard(e));
+          group.appendChild(body);
+
+          recordsList.appendChild(group);
+        }
+      }
+
+      recordsList.addEventListener("click", (ev) => {
+        const headerEl = ev.target.closest(".date-group-header");
+        if (headerEl) {
+          const dstr = headerEl.getAttribute("data-toggle-date");
+          const body = headerEl.nextElementSibling;
+          const chevron = headerEl.querySelector(".date-group-chevron");
+          const isOpen = expandedDates.has(dstr);
+
+          if (isOpen) {
+            expandedDates.delete(dstr);
+            chevron.classList.remove("open");
+            body.style.maxHeight = body.scrollHeight + "px";
+            void body.offsetHeight;
+            body.classList.remove("open");
+            body.style.maxHeight = "0px";
+          } else {
+            expandedDates.add(dstr);
+            chevron.classList.add("open");
+            body.classList.add("open");
+            body.style.maxHeight = body.scrollHeight + "px";
+            body.addEventListener("transitionend", function onEnd(e) {
+              if (e.propertyName === "max-height") {
+                body.style.maxHeight = "none";
+                body.removeEventListener("transitionend", onEnd);
+              }
+            });
+          }
+          return;
+        }
+
+        const editId = ev.target.getAttribute("data-edit");
+        const deleteId = ev.target.getAttribute("data-delete");
+
+        if (editId) {
+          const e = entries.find((x) => x.id === editId);
+          if (!e) return;
+          idField.value = e.id;
+          dateField.value = e.date;
+          timeField.value = e.time;
+          systolicField.value = e.systolic || "";
+          diastolicField.value = e.diastolic || "";
+          pulseField.value = e.pulse || "";
+          if (e.sugar) {
+            applySugarUnit(e.sugar.unit || "mgdl");
+            sugarValueField.value = e.sugar.value;
+            sugarTypeField.value = e.sugar.type;
+          } else {
+            sugarValueField.value = "";
+            sugarTypeField.value = "fasting";
+          }
+          notesField.value = e.notes || "";
+          selectedMeds = {};
+          for (const m of e.meds || []) {
+            let existing = medicines.find((med) => med.name === m.name);
+            if (!existing) {
+              existing = { id: uid(), name: m.name, dose: m.dose || "" };
+              medicines.push(existing);
+              save(MEDS_KEY, medicines);
+              renderManageChips();
+            }
+            selectedMeds[existing.id] = {
+              name: m.name,
+              dose: m.dose || "",
+              time: m.time || "",
+              timing: m.timing || "anytime",
+            };
+          }
+          renderMedChips();
+          activeTypes = new Set();
+          if (e.systolic && e.diastolic) activeTypes.add("bp");
+          if (e.sugar) activeTypes.add("sugar");
+          if (e.meds && e.meds.length > 0) activeTypes.add("med");
+          updateSectionVisibility();
+          submitBtn.textContent = "Update Reading";
+          formTitle.textContent = "✏️ Edit Reading";
+          cancelEditBtn.style.display = "inline-block";
+          document
+            .querySelectorAll(".quick-btn")
+            .forEach((b) => b.classList.remove("active"));
+          showStepForm();
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        }
+
+        if (deleteId) {
+          askConfirm("Delete this reading? This cannot be undone.", () => {
+            entries = entries.filter((e) => e.id !== deleteId);
+            save(ENTRIES_KEY, entries);
+            renderRecords();
+            showToast("Reading deleted");
+          });
+        }
+      });
+
+      /* ---------- Export ---------- */
+      document.getElementById("download-csv").addEventListener("click", () => {
+        if (entries.length === 0) {
+          alert("No records to download yet.");
+          return;
+        }
+        const headers = [
+          "Date",
+          "Day",
+          "Time",
+          "Systolic",
+          "Diastolic",
+          "Pulse",
+          "Sugar Level",
+          "Sugar Unit",
+          "Sugar Type",
+          "Medicines",
+          "Notes",
+        ];
+        // Newest date first, but oldest-to-newest within each date — easiest to scan.
+        const rows = [...entries].sort((a, b) => {
+          const dateDiff = b.date.localeCompare(a.date);
+          if (dateDiff !== 0) return dateDiff;
+          return a.time.localeCompare(b.time);
+        });
+        const csvLines = [headers.join(",")];
+        let lastDate = null;
+        for (const e of rows) {
+          if (lastDate !== null && lastDate !== e.date) {
+            csvLines.push(""); // blank row between dates for easy scanning
+          }
+          lastDate = e.date;
+          const medsStr = (e.meds || [])
+            .map(
+              (m) =>
+                `${m.name}${m.dose ? " " + m.dose : ""} (${timingLabel(m.timing)})${m.time ? " @" + formatTime(m.time) : ""}`,
+            )
+            .join("; ");
+          const line = [
+            formatDateLong(e.date),
+            weekdayLabel(e.date),
+            formatTime(e.time),
+            e.systolic || "",
+            e.diastolic || "",
+            e.pulse || "",
+            e.sugar ? e.sugar.value : "",
+            e.sugar ? sugarUnitLabel(e.sugar.unit || "mgdl") : "",
+            e.sugar ? sugarTypeLabel(e.sugar.type) : "",
+            medsStr,
+            (e.notes || "").replace(/\n/g, " "),
+          ]
+            .map((v) => `"${String(v).replace(/"/g, '""')}"`)
+            .join(",");
+          csvLines.push(line);
+        }
+        const blob = new Blob([csvLines.join("\n")], {
+          type: "text/csv;charset=utf-8;",
+        });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `health-log-${formatDateLong(todayStr()).replace(/ /g, "-")}.csv`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      });
+
+      /* ---------- Patient name & print report ---------- */
+      const PATIENT_NAME_KEY = "bp_medicine_log_patient_name";
+      const patientNameField = document.getElementById("patient-name");
+      patientNameField.value = safeStorage.get(PATIENT_NAME_KEY) || "";
+      patientNameField.addEventListener("input", () => {
+        safeStorage.set(PATIENT_NAME_KEY, patientNameField.value.trim());
+      });
+
+      function preparePrintHeader() {
+        const name = patientNameField.value.trim();
+        document.getElementById("print-patient").textContent = name
+          ? `Patient: ${name}`
+          : "";
+        document.getElementById("print-generated").textContent =
+          `Generated: ${formatDate(todayStr())}`;
+        document.getElementById("print-count").textContent =
+          `Total Records: ${entries.length}`;
+      }
+
+      document.getElementById("print-btn").addEventListener("click", () => {
+        preparePrintHeader();
+        window.print();
+      });
+
+      /* ---------- Email PDF ---------- */
+      // Pulls the exact CSS already used for Print/PDF (the @media print
+      // rules) so the emailed PDF looks identical to what Print/PDF
+      // produces — one source of truth, no separate design to keep in sync.
+      function getPrintCssText() {
+        let cssText = "";
+        for (const sheet of document.styleSheets) {
+          let rules;
+          try {
+            rules = sheet.cssRules;
+          } catch (e) {
+            continue;
+          }
+          for (const rule of rules) {
+            if (rule.media && rule.media.mediaText === "print") {
+              for (const inner of rule.cssRules) {
+                cssText += inner.cssText + "\n";
+              }
+            }
+          }
+        }
+        return cssText;
+      }
+
+      async function buildReportPdf() {
+        preparePrintHeader();
+        const printCss = getPrintCssText();
+        const target = document.querySelector(".wrap");
+
+        const canvas = await html2canvas(target, {
+          scale: 2,
+          useCORS: true,
+          backgroundColor: "#ffffff",
+          onclone: (clonedDoc) => {
+            const style = clonedDoc.createElement("style");
+            style.textContent = printCss;
+            clonedDoc.head.appendChild(style);
+          },
+        });
+
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF({ unit: "pt", format: "a4" });
+        const pageWidth = pdf.internal.pageSize.getWidth();
+        const pageHeight = pdf.internal.pageSize.getHeight();
+        const imgWidth = pageWidth;
+        const imgHeight = (canvas.height * imgWidth) / canvas.width;
+        const imgData = canvas.toDataURL("image/jpeg", 0.85);
+
+        let heightLeft = imgHeight;
+        let position = 0;
+        pdf.addImage(imgData, "JPEG", 0, position, imgWidth, imgHeight);
+        heightLeft -= pageHeight;
+        while (heightLeft > 0) {
+          position = heightLeft - imgHeight;
+          pdf.addPage();
+          pdf.addImage(imgData, "JPEG", 0, position, imgWidth, imgHeight);
+          heightLeft -= pageHeight;
+        }
+        return pdf;
+      }
+
+      document
+        .getElementById("email-pdf-btn")
+        .addEventListener("click", async () => {
+          if (entries.length === 0) {
+            alert("No records to email yet.");
+            return;
+          }
+          if (
+            typeof window.jspdf === "undefined" ||
+            typeof html2canvas === "undefined"
+          ) {
+            alert(
+              "The PDF generator couldn't load. Check your internet connection and try again.",
+            );
+            return;
+          }
+          const emailBtn = document.getElementById("email-pdf-btn");
+          emailBtn.disabled = true;
+          const originalLabel = emailBtn.textContent;
+          emailBtn.textContent = "Preparing PDF...";
+          try {
+            const doc = await buildReportPdf();
+            const fileName = `health-log-${todayStr()}.pdf`;
+
+            // On phones/tablets, this opens the native share sheet with the
+            // PDF already attached — pick Mail, Gmail, WhatsApp, etc.
+            try {
+              const pdfBlob = doc.output("blob");
+              const file = new File([pdfBlob], fileName, {
+                type: "application/pdf",
+              });
+              if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                await navigator.share({
+                  files: [file],
+                  title: "Health Report",
+                  text: "Sharing my health report.",
+                });
+                return;
+              }
+            } catch (err) {
+              if (err && err.name === "AbortError") return;
+              console.error("Share failed, falling back to download:", err);
+            }
+
+            // Desktop fallback: download the PDF, then open the email app —
+            // browsers can't attach files to an email automatically, so you
+            // just need to attach the file that was downloaded.
+            doc.save(fileName);
+            const subject = encodeURIComponent("My Health Report");
+            const body = encodeURIComponent(
+              "Hi,\n\nPlease find my health report attached.\n\n" +
+                "(The PDF was just downloaded to your computer — attach it to this email before sending.)",
+            );
+            window.location.href = `mailto:?subject=${subject}&body=${body}`;
+          } catch (err) {
+            console.error("PDF generation failed:", err);
+            alert("Couldn't generate the PDF. Please try again.");
+          } finally {
+            emailBtn.disabled = false;
+            emailBtn.textContent = originalLabel;
+          }
+        });
+
+      /* ---------- Init ---------- */
+      document.getElementById("footer-year").textContent =
+        new Date().getFullYear();
+      renderMedChips();
+      renderManageChips();
+      renderRecords();
+    </script>
+  </body>
+</html>
