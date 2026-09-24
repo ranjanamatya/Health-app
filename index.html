@@ -1824,13 +1824,17 @@
       const emptyState = document.getElementById("empty-state");
       const countLabel = document.getElementById("count-label");
 
+      function localDateStr(d) {
+        const p = (n) => String(n).padStart(2, "0");
+        return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}`;
+      }
       function todayStr() {
-        return new Date().toISOString().slice(0, 10);
+        return localDateStr(new Date());
       }
       function yesterdayStr() {
         const d = new Date();
         d.setDate(d.getDate() - 1);
-        return d.toISOString().slice(0, 10);
+        return localDateStr(d);
       }
       function nowStr() {
         return new Date().toTimeString().slice(0, 5);
